@@ -19,9 +19,12 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
         { id: 'kontak', label: 'Kontak' },
     ];
 
+    // Navbar selalu pakai background putih kecuali di Home saat belum scroll
+    const isTransparent = currentPage === 'home' && !scrolled;
+
     return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-            scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+            isTransparent ? 'bg-transparent' : 'bg-white/95 backdrop-blur-md shadow-lg'
         }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 md:h-20">
@@ -31,10 +34,10 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                             <span className="text-white font-bold text-sm">DK</span>
                         </div>
                         <div className="hidden sm:block">
-                            <h1 className={`font-bold text-sm leading-tight ${scrolled ? 'text-gray-900' : 'text-white'}`}>
+                            <h1 className={`font-bold text-sm leading-tight ${isTransparent ? 'text-white' : 'text-gray-900'}`}>
                                 DISKOMINFO
                             </h1>
-                            <p className={`text-xs ${scrolled ? 'text-gray-500' : 'text-blue-100'}`}>
+                            <p className={`text-xs ${isTransparent ? 'text-blue-100' : 'text-gray-500'}`}>
                                 Kab. Bengkayang
                             </p>
                         </div>
@@ -49,9 +52,9 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                                 className={`nav-link px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                                     currentPage === link.id
                                         ? 'bg-blue-600 text-white shadow-md'
-                                        : scrolled
-                                            ? 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
-                                            : 'text-white/90 hover:text-white hover:bg-white/10'
+                                        : isTransparent
+                                            ? 'text-white/90 hover:text-white hover:bg-white/10'
+                                            : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                                 }`}
                             >
                                 {link.label}
@@ -62,7 +65,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className={`md:hidden p-2 rounded-lg ${scrolled ? 'text-gray-700' : 'text-white'}`}
+                        className={`md:hidden p-2 rounded-lg ${isTransparent ? 'text-white' : 'text-gray-700'}`}
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             {isOpen ? (
