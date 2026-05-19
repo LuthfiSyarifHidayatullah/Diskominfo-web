@@ -29,31 +29,31 @@ const StrukturOrganisasiPage = () => {
             dotColor: 'bg-blue-500'
         },
         kepala_bidang: {
-            hoverBorder: 'hover:border-indigo-500',
-            hoverShadow: 'hover:shadow-indigo-200',
-            hoverRing: 'group-hover:ring-indigo-500',
-            hoverBg: 'group-hover:bg-indigo-500',
-            badge: 'bg-indigo-100 text-indigo-700 group-hover:bg-indigo-500 group-hover:text-white',
+            hoverBorder: 'hover:border-blue-500',
+            hoverShadow: 'hover:shadow-blue-200',
+            hoverRing: 'group-hover:ring-blue-500',
+            hoverBg: 'group-hover:bg-blue-500',
+            badge: 'bg-blue-100 text-blue-700 group-hover:bg-blue-500 group-hover:text-white',
             label: 'Kepala Bidang',
-            dotColor: 'bg-indigo-500'
+            dotColor: 'bg-blue-500'
         },
         kasubag_keuangan: {
-            hoverBorder: 'hover:border-emerald-500',
-            hoverShadow: 'hover:shadow-emerald-200',
-            hoverRing: 'group-hover:ring-emerald-500',
-            hoverBg: 'group-hover:bg-emerald-500',
-            badge: 'bg-emerald-100 text-emerald-700 group-hover:bg-emerald-500 group-hover:text-white',
+            hoverBorder: 'hover:border-green-500',
+            hoverShadow: 'hover:shadow-green-200',
+            hoverRing: 'group-hover:ring-green-500',
+            hoverBg: 'group-hover:bg-green-500',
+            badge: 'bg-green-100 text-green-700 group-hover:bg-green-500 group-hover:text-white',
             label: 'Kasubag Keuangan',
-            dotColor: 'bg-emerald-500'
+            dotColor: 'bg-green-500'
         },
         kasubag_umum: {
-            hoverBorder: 'hover:border-teal-500',
-            hoverShadow: 'hover:shadow-teal-200',
-            hoverRing: 'group-hover:ring-teal-500',
-            hoverBg: 'group-hover:bg-teal-500',
-            badge: 'bg-teal-100 text-teal-700 group-hover:bg-teal-500 group-hover:text-white',
+            hoverBorder: 'hover:border-green-500',
+            hoverShadow: 'hover:shadow-green-200',
+            hoverRing: 'group-hover:ring-green-500',
+            hoverBg: 'group-hover:bg-green-500',
+            badge: 'bg-green-100 text-green-700 group-hover:bg-green-500 group-hover:text-white',
             label: 'Kasubag Umum',
-            dotColor: 'bg-teal-500'
+            dotColor: 'bg-green-500'
         },
         pelaksana: {
             hoverBorder: 'hover:border-orange-500',
