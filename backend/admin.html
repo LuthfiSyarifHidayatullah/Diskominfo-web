@@ -113,10 +113,12 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Jabatan</label>
                     <select id="form-tipeJabatan" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none">
-                        <option value="pimpinan">Pimpinan</option>
-                        <option value="sekretaris">Sekretaris</option>
-                        <option value="jafung">Jabatan Fungsional (Jafung)</option>
+                        <option value="kepala_dinas">Kepala Dinas</option>
+                        <option value="sekretaris">Sekretaris / Kepala Bidang</option>
+                        <option value="kasubag">Kasubag Keuangan / Kasubag Umum</option>
                         <option value="pelaksana">Pelaksana</option>
+                        <option value="jafung">Jabatan Fungsional (Jafung)</option>
+                        <option value="pppk">PPPK</option>
                     </select>
                 </div>
                 <div>
@@ -173,16 +175,20 @@
 
     // Color mapping for tipe jabatan
     const TIPE_COLORS = {
-        pimpinan: 'bg-yellow-100 text-yellow-800',
+        kepala_dinas: 'bg-red-100 text-red-800',
         sekretaris: 'bg-blue-100 text-blue-800',
-        jafung: 'bg-purple-100 text-purple-800',
-        pelaksana: 'bg-gray-100 text-gray-700'
+        kasubag: 'bg-emerald-100 text-emerald-800',
+        pelaksana: 'bg-orange-100 text-orange-800',
+        jafung: 'bg-gray-100 text-gray-700',
+        pppk: 'bg-yellow-100 text-yellow-800'
     };
     const TIPE_LABELS = {
-        pimpinan: 'Pimpinan',
-        sekretaris: 'Sekretaris',
+        kepala_dinas: 'Kepala Dinas',
+        sekretaris: 'Sekretaris/Kabid',
+        kasubag: 'Kasubag',
+        pelaksana: 'Pelaksana',
         jafung: 'Jafung',
-        pelaksana: 'Pelaksana'
+        pppk: 'PPPK'
     };
 
     async function loadData() {

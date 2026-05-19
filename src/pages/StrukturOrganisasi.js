@@ -1,5 +1,5 @@
 // Struktur Organisasi Page - MPL ID Roster Style
-// Fetches data from backend API, falls back to static data
+// Card foto pegawai dengan hover warna sesuai tipe jabatan
 
 const StrukturOrganisasiPage = () => {
     const [activeBidang, setActiveBidang] = React.useState('');
@@ -7,44 +7,63 @@ const StrukturOrganisasiPage = () => {
     const [bidangData, setBidangData] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
 
-    // Warna card berdasarkan tipe jabatan
+    // Warna HOVER card berdasarkan tipe jabatan
     const TIPE_JABATAN_STYLES = {
-        pimpinan: {
-            cardBg: 'from-yellow-600 to-amber-500',
-            badge: 'bg-yellow-400 text-yellow-900',
-            label: 'Pimpinan',
-            ringColor: 'ring-yellow-400'
+        kepala_dinas: {
+            hoverBorder: 'hover:border-red-500',
+            hoverShadow: 'hover:shadow-red-200',
+            hoverRing: 'group-hover:ring-red-500',
+            hoverBg: 'group-hover:bg-red-500',
+            badge: 'bg-red-100 text-red-700 group-hover:bg-red-500 group-hover:text-white',
+            label: 'Kepala Dinas',
+            dotColor: 'bg-red-500'
         },
         sekretaris: {
-            cardBg: 'from-blue-700 to-blue-500',
-            badge: 'bg-blue-400 text-blue-900',
-            label: 'Sekretaris',
-            ringColor: 'ring-blue-400'
+            hoverBorder: 'hover:border-blue-500',
+            hoverShadow: 'hover:shadow-blue-200',
+            hoverRing: 'group-hover:ring-blue-500',
+            hoverBg: 'group-hover:bg-blue-500',
+            badge: 'bg-blue-100 text-blue-700 group-hover:bg-blue-500 group-hover:text-white',
+            label: 'Sekretaris / Kabid',
+            dotColor: 'bg-blue-500'
         },
-        jafung: {
-            cardBg: 'from-purple-700 to-purple-500',
-            badge: 'bg-purple-400 text-purple-900',
-            label: 'Jabatan Fungsional',
-            ringColor: 'ring-purple-400'
+        kasubag: {
+            hoverBorder: 'hover:border-emerald-500',
+            hoverShadow: 'hover:shadow-emerald-200',
+            hoverRing: 'group-hover:ring-emerald-500',
+            hoverBg: 'group-hover:bg-emerald-500',
+            badge: 'bg-emerald-100 text-emerald-700 group-hover:bg-emerald-500 group-hover:text-white',
+            label: 'Kasubag',
+            dotColor: 'bg-emerald-500'
         },
         pelaksana: {
-            cardBg: 'from-slate-600 to-slate-400',
-            badge: 'bg-slate-200 text-slate-700',
+            hoverBorder: 'hover:border-orange-500',
+            hoverShadow: 'hover:shadow-orange-200',
+            hoverRing: 'group-hover:ring-orange-500',
+            hoverBg: 'group-hover:bg-orange-500',
+            badge: 'bg-orange-100 text-orange-700 group-hover:bg-orange-500 group-hover:text-white',
             label: 'Pelaksana',
-            ringColor: 'ring-slate-400'
+            dotColor: 'bg-orange-500'
+        },
+        jafung: {
+            hoverBorder: 'hover:border-gray-500',
+            hoverShadow: 'hover:shadow-gray-200',
+            hoverRing: 'group-hover:ring-gray-500',
+            hoverBg: 'group-hover:bg-gray-500',
+            badge: 'bg-gray-100 text-gray-700 group-hover:bg-gray-500 group-hover:text-white',
+            label: 'Jafung',
+            dotColor: 'bg-gray-500'
+        },
+        pppk: {
+            hoverBorder: 'hover:border-yellow-500',
+            hoverShadow: 'hover:shadow-yellow-200',
+            hoverRing: 'group-hover:ring-yellow-500',
+            hoverBg: 'group-hover:bg-yellow-500',
+            badge: 'bg-yellow-100 text-yellow-700 group-hover:bg-yellow-500 group-hover:text-white',
+            label: 'PPPK',
+            dotColor: 'bg-yellow-500'
         }
     };
-
-    // Warna bidang
-    const BIDANG_COLORS = [
-        'from-blue-900 to-blue-700',
-        'from-purple-700 to-purple-500',
-        'from-emerald-700 to-emerald-500',
-        'from-orange-700 to-orange-500',
-        'from-rose-700 to-rose-500',
-        'from-cyan-700 to-cyan-500',
-        'from-indigo-700 to-indigo-500'
-    ];
 
     React.useEffect(() => {
         fetchData();
@@ -52,7 +71,6 @@ const StrukturOrganisasiPage = () => {
 
     const fetchData = async () => {
         try {
-            // Try fetching from backend API
             const response = await fetch('/api/export');
             if (response.ok) {
                 const data = await response.json();
@@ -67,7 +85,6 @@ const StrukturOrganisasiPage = () => {
             console.log('Backend not available, using static data');
         }
 
-        // Fallback to BIDANG_DATA if defined (static data)
         if (typeof BIDANG_DATA !== 'undefined' && BIDANG_DATA.length > 0) {
             setBidangData(BIDANG_DATA);
             setActiveBidang(BIDANG_DATA[0].id);
@@ -86,10 +103,6 @@ const StrukturOrganisasiPage = () => {
         }, 200);
     };
 
-    const getBidangColor = (index) => {
-        return BIDANG_COLORS[index % BIDANG_COLORS.length];
-    };
-
     const getStyle = (tipeJabatan) => {
         return TIPE_JABATAN_STYLES[tipeJabatan] || TIPE_JABATAN_STYLES.pelaksana;
     };
@@ -101,10 +114,8 @@ const StrukturOrganisasiPage = () => {
         if (pegawai.foto && pegawai.foto.startsWith('http')) {
             return pegawai.foto;
         }
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(pegawai.nama)}&background=4f46e5&color=fff&size=200&font-size=0.35`;
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(pegawai.nama)}&background=e2e8f0&color=475569&size=200&font-size=0.35`;
     };
-
-    const isPimpinanLevel = (tipe) => ['pimpinan', 'sekretaris', 'jafung'].includes(tipe);
 
     if (loading) {
         return (
@@ -125,13 +136,6 @@ const StrukturOrganisasiPage = () => {
         );
     }
 
-    const bidangIndex = bidangData.findIndex(b => b.id === activeBidang);
-    const currentColor = getBidangColor(bidangIndex);
-
-    // Separate leaders and members based on tipeJabatan
-    const leaders = currentBidang.anggota.filter(a => isPimpinanLevel(a.tipeJabatan || a.role));
-    const members = currentBidang.anggota.filter(a => !isPimpinanLevel(a.tipeJabatan || a.role));
-
     return (
         <div className="pt-20">
             {/* Header */}
@@ -146,7 +150,7 @@ const StrukturOrganisasiPage = () => {
                             Struktur Organisasi
                         </h1>
                         <p className="text-blue-100 text-lg max-w-2xl mx-auto">
-                            Susunan pegawai Dinas Komunikasi dan Informatika Kabupaten Bengkayang per bidang
+                            Susunan pegawai Dinas Komunikasi dan Informatika Kabupaten Bengkayang
                         </p>
                     </div>
                 </div>
@@ -159,7 +163,7 @@ const StrukturOrganisasiPage = () => {
                         <span className="text-gray-500 font-medium">Keterangan Warna:</span>
                         {Object.entries(TIPE_JABATAN_STYLES).map(([key, style]) => (
                             <div key={key} className="flex items-center space-x-1.5">
-                                <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${style.cardBg}`}></div>
+                                <div className={`w-3 h-3 rounded-full ${style.dotColor}`}></div>
                                 <span className="text-gray-600 font-medium">{style.label}</span>
                             </div>
                         ))}
@@ -191,109 +195,59 @@ const StrukturOrganisasiPage = () => {
             {/* Roster Display */}
             <section className="py-16 bg-gray-50 min-h-[60vh]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Bidang Info Header */}
+                    {/* Bidang Info */}
                     <div className={`text-center mb-12 transition-opacity duration-200 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-                        <div className={`inline-flex items-center px-6 py-2 rounded-full bg-gradient-to-r ${currentColor} text-white text-sm font-semibold mb-4 shadow-lg`}>
-                            {currentBidang.nama}
-                        </div>
-                        <p className="text-gray-600 max-w-lg mx-auto">
-                            {currentBidang.deskripsi}
-                        </p>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">{currentBidang.nama}</h2>
+                        <p className="text-gray-600 max-w-lg mx-auto">{currentBidang.deskripsi}</p>
                     </div>
 
-                    {/* Roster Cards */}
+                    {/* Cards Grid */}
                     <div className={`transition-all duration-200 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
-                        {/* Leaders - Featured Cards */}
-                        {leaders.length > 0 && (
-                            <div className="flex flex-wrap justify-center gap-6 mb-10">
-                                {leaders.map((pegawai, index) => {
-                                    const style = getStyle(pegawai.tipeJabatan || 'pimpinan');
-                                    return (
-                                        <div key={pegawai.id || index} className="roster-card bg-white rounded-2xl shadow-lg border border-gray-100 w-72 overflow-hidden">
-                                            <div className={`h-32 bg-gradient-to-br ${style.cardBg} relative flex items-end justify-center`}>
-                                                <div className="absolute inset-0 opacity-20">
-                                                    <div className="absolute top-4 right-4 w-16 h-16 border-2 border-white/30 rounded-full"></div>
-                                                    <div className="absolute bottom-4 left-4 w-8 h-8 border border-white/20 rounded-full"></div>
-                                                </div>
-                                                <div className="relative -mb-12">
-                                                    <div className={`w-24 h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white ring-2 ${style.ringColor}`}>
-                                                        <img
-                                                            src={getFotoUrl(pegawai)}
-                                                            alt={pegawai.nama}
-                                                            className="roster-img w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    {pegawai.tipeJabatan === 'pimpinan' && (
-                                                        <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-md">
-                                                            <span className="text-sm">👑</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="pt-14 pb-6 px-6 text-center">
-                                                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 ${style.badge}`}>
-                                                    {style.label}
-                                                </span>
-                                                <h3 className="font-bold text-lg text-gray-900 mb-1">
-                                                    {pegawai.nama}
-                                                </h3>
-                                                <p className="text-blue-600 text-sm font-medium mb-2">
-                                                    {pegawai.jabatan}
-                                                </p>
-                                                <p className="text-gray-400 text-xs font-mono">
-                                                    NIP: {pegawai.nip}
-                                                </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
+                            {currentBidang.anggota.map((pegawai, index) => {
+                                const style = getStyle(pegawai.tipeJabatan || 'pelaksana');
+                                return (
+                                    <div
+                                        key={pegawai.id || index}
+                                        className={`group bg-white rounded-2xl border-2 border-gray-100 w-full max-w-[260px] overflow-hidden cursor-pointer
+                                            transition-all duration-300 ease-out
+                                            hover:-translate-y-2 hover:shadow-xl ${style.hoverBorder} ${style.hoverShadow}`}
+                                    >
+                                        {/* Top color bar - appears on hover */}
+                                        <div className={`h-1 bg-gray-100 transition-colors duration-300 ${style.hoverBg}`}></div>
+
+                                        {/* Photo */}
+                                        <div className="pt-6 pb-3 flex justify-center">
+                                            <div className={`w-28 h-28 rounded-full overflow-hidden border-4 border-gray-100 shadow-md
+                                                transition-all duration-300
+                                                group-hover:border-transparent ring-0 group-hover:ring-4 ${style.hoverRing}`}>
+                                                <img
+                                                    src={getFotoUrl(pegawai)}
+                                                    alt={pegawai.nama}
+                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                                />
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        )}
 
-                        {/* Members - Regular Cards */}
-                        {members.length > 0 && (
-                            <div>
-                                <div className="flex items-center justify-center mb-6">
-                                    <div className="h-px bg-gray-200 flex-1 max-w-[100px]"></div>
-                                    <span className="px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider">Anggota Tim</span>
-                                    <div className="h-px bg-gray-200 flex-1 max-w-[100px]"></div>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
-                                    {members.map((pegawai, index) => {
-                                        const style = getStyle(pegawai.tipeJabatan || 'pelaksana');
-                                        return (
-                                            <div key={pegawai.id || index} className="roster-card bg-white rounded-xl shadow-md border border-gray-100 w-full max-w-[260px] overflow-hidden">
-                                                <div className={`h-16 bg-gradient-to-r ${style.cardBg} relative flex items-end justify-center`}>
-                                                    <div className="relative -mb-8">
-                                                        <div className={`w-16 h-16 rounded-full border-3 border-white shadow-lg overflow-hidden bg-white ring-2 ${style.ringColor}`}>
-                                                            <img
-                                                                src={getFotoUrl(pegawai)}
-                                                                alt={pegawai.nama}
-                                                                className="roster-img w-full h-full object-cover"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="pt-10 pb-5 px-4 text-center">
-                                                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold mb-2 ${style.badge}`}>
-                                                        {style.label}
-                                                    </span>
-                                                    <h4 className="font-semibold text-gray-900 text-sm mb-1">
-                                                        {pegawai.nama}
-                                                    </h4>
-                                                    <p className="text-blue-600 text-xs font-medium mb-1">
-                                                        {pegawai.jabatan}
-                                                    </p>
-                                                    <p className="text-gray-400 text-xs font-mono">
-                                                        NIP: {pegawai.nip}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
+                                        {/* Info */}
+                                        <div className="pb-6 px-4 text-center">
+                                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 transition-colors duration-300 ${style.badge}`}>
+                                                {style.label}
+                                            </span>
+                                            <h4 className="font-bold text-gray-900 text-sm mb-1 leading-tight">
+                                                {pegawai.nama}
+                                            </h4>
+                                            <p className="text-gray-500 text-xs font-medium mb-1">
+                                                {pegawai.jabatan}
+                                            </p>
+                                            <p className="text-gray-300 text-xs font-mono">
+                                                {pegawai.nip}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </section>

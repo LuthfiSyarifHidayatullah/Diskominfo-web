@@ -10,15 +10,15 @@ const BIDANG_DATA = [
                 nama: 'Nama Kepala Dinas',
                 jabatan: 'Kepala Dinas',
                 nip: '19XX0101 200X01 X XXX',
-                tipeJabatan: 'pimpinan',
-                foto: 'https://ui-avatars.com/api/?name=Kepala+Dinas&background=ca8a04&color=fff&size=200&font-size=0.35'
+                tipeJabatan: 'kepala_dinas',
+                foto: 'https://ui-avatars.com/api/?name=Kepala+Dinas&background=e2e8f0&color=475569&size=200&font-size=0.35'
             },
             {
                 nama: 'Nama Sekretaris',
                 jabatan: 'Sekretaris',
                 nip: '19XX0101 200X01 X XXX',
                 tipeJabatan: 'sekretaris',
-                foto: 'https://ui-avatars.com/api/?name=Sekretaris&background=2563eb&color=fff&size=200&font-size=0.35'
+                foto: 'https://ui-avatars.com/api/?name=Sekretaris&background=e2e8f0&color=475569&size=200&font-size=0.35'
             }
         ]
     },
