@@ -241,6 +241,17 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
+    // Serve frontend files (landing page)
+    const frontendRoot = path.join(__dirname, '..');
+    if (pathname === '/' || pathname === '/index.html') {
+        serveStatic(res, path.join(frontendRoot, 'index.html'));
+        return;
+    }
+    if (pathname.startsWith('/src/') || pathname.startsWith('/public/')) {
+        serveStatic(res, path.join(frontendRoot, pathname));
+        return;
+    }
+
     try {
         // ====== API ROUTES ======
 
@@ -435,6 +446,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
     console.log(`\n🚀 Backend Diskominfo Bengkayang`);
     console.log(`   Server berjalan di: http://localhost:${PORT}`);
+    console.log(`   Website: http://localhost:${PORT}`);
     console.log(`   Admin Panel: http://localhost:${PORT}/admin`);
     console.log(`   API: http://localhost:${PORT}/api/pegawai`);
     console.log(`\n   Tekan Ctrl+C untuk berhenti.\n`);
