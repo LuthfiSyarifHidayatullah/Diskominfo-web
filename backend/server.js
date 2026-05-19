@@ -14,10 +14,76 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { randomUUID } = require('crypto');
+const { execSync } = require('child_process');
 
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data', 'pegawai.json');
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
+
+// ============ WEBP CONVERSION ============
+
+/**
+ * Coba convert gambar ke WebP otomatis
+ * Prioritas: sharp (npm) > cwebp (CLI) > fallback (simpan asli)
+ * 
+ * Ukuran foto dioptimalkan ke max 400x400px
+ */
+let sharpAvailable = false;
+let sharp = null;
+try {
+    sharp = require('sharp');
+    sharpAvailable = true;
+    console.log('[WebP] Menggunakan sharp untuk konversi');
+} catch (e) {
+    // sharp tidak tersedia, coba cwebp CLI
+}
+
+let cwebpAvailable = false;
+try {
+    execSync('cwebp -version', { stdio: 'ignore' });
+    cwebpAvailable = true;
+    if (!sharpAvailable) console.log('[WebP] Menggunakan cwebp CLI untuk konversi');
+} catch (e) {
+    // cwebp tidak tersedia
+}
+
+if (!sharpAvailable && !cwebpAvailable) {
+    console.log('[WebP] sharp & cwebp tidak tersedia. Foto akan disimpan tanpa konversi.');
+    console.log('[WebP] Untuk mengaktifkan auto-convert: npm install sharp');
+}
+
+async function convertToWebP(inputPath) {
+    const outputFilename = path.basename(inputPath, path.extname(inputPath)) + '.webp';
+    const outputPath = path.join(UPLOADS_DIR, outputFilename);
+
+    try {
+        if (sharpAvailable) {
+            // Pakai sharp: resize ke 400x400 max + convert ke webp quality 80
+            await sharp(inputPath)
+                .resize(400, 400, { fit: 'cover', position: 'top' })
+                .webp({ quality: 80 })
+                .toFile(outputPath);
+            
+            // Hapus file asli
+            fs.unlinkSync(inputPath);
+            return outputFilename;
+        }
+
+        if (cwebpAvailable) {
+            // Pakai cwebp CLI
+            execSync(`cwebp -q 80 -resize 400 400 "${inputPath}" -o "${outputPath}"`, { stdio: 'ignore' });
+            
+            // Hapus file asli
+            fs.unlinkSync(inputPath);
+            return outputFilename;
+        }
+    } catch (err) {
+        console.error('[WebP] Gagal convert:', err.message);
+    }
+
+    // Fallback: tetap simpan file asli
+    return path.basename(inputPath);
+}
 
 // Ensure directories exist
 if (!fs.existsSync(path.join(__dirname, 'data'))) fs.mkdirSync(path.join(__dirname, 'data'));
@@ -163,10 +229,13 @@ function parseMultipart(req) {
                     const filePath = path.join(UPLOADS_DIR, newFilename);
                     
                     fs.writeFileSync(filePath, Buffer.from(body, 'binary'));
+                    
+                    // Auto-convert ke WebP (async, tapi kita track filename)
                     files[fieldName] = {
                         filename: newFilename,
                         originalname: filename,
-                        path: filePath
+                        path: filePath,
+                        needsConversion: ['.jpg', '.jpeg', '.png', '.bmp', '.tiff'].includes(ext)
                     };
                 } else {
                     parts[fieldName] = body.trim();
@@ -319,7 +388,13 @@ const server = http.createServer(async (req, res) => {
                 const { fields, files } = await parseMultipart(req);
                 pegawaiData = fields;
                 if (files.foto) {
-                    fotoFilename = `/uploads/${files.foto.filename}`;
+                    // Auto-convert ke WebP jika memungkinkan
+                    if (files.foto.needsConversion) {
+                        const webpFilename = await convertToWebP(files.foto.path);
+                        fotoFilename = `/uploads/${webpFilename}`;
+                    } else {
+                        fotoFilename = `/uploads/${files.foto.filename}`;
+                    }
                 }
             } else {
                 pegawaiData = await getBody(req);
@@ -354,7 +429,13 @@ const server = http.createServer(async (req, res) => {
                 const { fields, files } = await parseMultipart(req);
                 pegawaiData = fields;
                 if (files.foto) {
-                    fotoFilename = `/uploads/${files.foto.filename}`;
+                    // Auto-convert ke WebP jika memungkinkan
+                    if (files.foto.needsConversion) {
+                        const webpFilename = await convertToWebP(files.foto.path);
+                        fotoFilename = `/uploads/${webpFilename}`;
+                    } else {
+                        fotoFilename = `/uploads/${files.foto.filename}`;
+                    }
                 }
             } else {
                 pegawaiData = await getBody(req);
@@ -413,7 +494,15 @@ const server = http.createServer(async (req, res) => {
                 if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile);
             }
 
-            data.pegawai[index].foto = `/uploads/${files.foto.filename}`;
+            // Auto-convert ke WebP
+            let finalFilename;
+            if (files.foto.needsConversion) {
+                finalFilename = await convertToWebP(files.foto.path);
+            } else {
+                finalFilename = files.foto.filename;
+            }
+
+            data.pegawai[index].foto = `/uploads/${finalFilename}`;
             writeData(data);
             sendJSON(res, 200, data.pegawai[index]);
             return;

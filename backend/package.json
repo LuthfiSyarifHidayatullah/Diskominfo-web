@@ -1,0 +1,15 @@
+{
+  "name": "diskominfo-backend",
+  "version": "1.0.0",
+  "description": "Backend server untuk website Diskominfo Bengkayang",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0"
+  },
+  "keywords": ["diskominfo", "bengkayang"],
+  "license": "ISC"
+}
