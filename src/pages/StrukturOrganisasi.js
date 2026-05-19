@@ -25,17 +25,35 @@ const StrukturOrganisasiPage = () => {
             hoverRing: 'group-hover:ring-blue-500',
             hoverBg: 'group-hover:bg-blue-500',
             badge: 'bg-blue-100 text-blue-700 group-hover:bg-blue-500 group-hover:text-white',
-            label: 'Sekretaris / Kabid',
+            label: 'Sekretaris',
             dotColor: 'bg-blue-500'
         },
-        kasubag: {
+        kepala_bidang: {
+            hoverBorder: 'hover:border-indigo-500',
+            hoverShadow: 'hover:shadow-indigo-200',
+            hoverRing: 'group-hover:ring-indigo-500',
+            hoverBg: 'group-hover:bg-indigo-500',
+            badge: 'bg-indigo-100 text-indigo-700 group-hover:bg-indigo-500 group-hover:text-white',
+            label: 'Kepala Bidang',
+            dotColor: 'bg-indigo-500'
+        },
+        kasubag_keuangan: {
             hoverBorder: 'hover:border-emerald-500',
             hoverShadow: 'hover:shadow-emerald-200',
             hoverRing: 'group-hover:ring-emerald-500',
             hoverBg: 'group-hover:bg-emerald-500',
             badge: 'bg-emerald-100 text-emerald-700 group-hover:bg-emerald-500 group-hover:text-white',
-            label: 'Kasubag',
+            label: 'Kasubag Keuangan',
             dotColor: 'bg-emerald-500'
+        },
+        kasubag_umum: {
+            hoverBorder: 'hover:border-teal-500',
+            hoverShadow: 'hover:shadow-teal-200',
+            hoverRing: 'group-hover:ring-teal-500',
+            hoverBg: 'group-hover:bg-teal-500',
+            badge: 'bg-teal-100 text-teal-700 group-hover:bg-teal-500 group-hover:text-white',
+            label: 'Kasubag Umum',
+            dotColor: 'bg-teal-500'
         },
         pelaksana: {
             hoverBorder: 'hover:border-orange-500',
@@ -69,7 +87,9 @@ const StrukturOrganisasiPage = () => {
     // Tipe yang termasuk level pimpinan (card besar, posisi atas)
     const LEVEL_PIMPINAN = ['kepala_dinas'];
     const LEVEL_SEKRETARIS = ['sekretaris'];
-    const LEVEL_KASUBAG = ['kasubag'];
+    const LEVEL_KEPALA_BIDANG = ['kepala_bidang'];
+    const LEVEL_KASUBAG_KEUANGAN = ['kasubag_keuangan'];
+    const LEVEL_KASUBAG_UMUM = ['kasubag_umum'];
     const LEVEL_STAFF = ['pelaksana', 'jafung', 'pppk'];
 
     React.useEffect(() => {
@@ -148,7 +168,9 @@ const StrukturOrganisasiPage = () => {
     // Pisahkan per level
     const pimpinan = currentBidang.anggota.filter(a => LEVEL_PIMPINAN.includes(a.tipeJabatan));
     const sekretaris = currentBidang.anggota.filter(a => LEVEL_SEKRETARIS.includes(a.tipeJabatan));
-    const kasubag = currentBidang.anggota.filter(a => LEVEL_KASUBAG.includes(a.tipeJabatan));
+    const kepalaBidang = currentBidang.anggota.filter(a => LEVEL_KEPALA_BIDANG.includes(a.tipeJabatan));
+    const kasubagKeuangan = currentBidang.anggota.filter(a => LEVEL_KASUBAG_KEUANGAN.includes(a.tipeJabatan));
+    const kasubagUmum = currentBidang.anggota.filter(a => LEVEL_KASUBAG_UMUM.includes(a.tipeJabatan));
     const staff = currentBidang.anggota.filter(a => LEVEL_STAFF.includes(a.tipeJabatan) || !a.tipeJabatan);
 
     // Card component untuk pimpinan (besar) - foto 160x160px
@@ -364,12 +386,12 @@ const StrukturOrganisasiPage = () => {
                             </div>
                         )}
 
-                        {/* === LEVEL 2: SEKRETARIS (terpisah dari Kabid) === */}
+                        {/* === LEVEL 2: SEKRETARIS === */}
                         {sekretaris.length > 0 && (
                             <div className="mb-10">
                                 <div className="flex items-center justify-center mb-6">
                                     <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
-                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sekretaris & Kepala Bidang</span>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sekretaris</span>
                                     <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
                                 </div>
                                 <div className="flex flex-wrap justify-center gap-6">
@@ -380,23 +402,55 @@ const StrukturOrganisasiPage = () => {
                             </div>
                         )}
 
-                        {/* === LEVEL 3: KASUBAG === */}
-                        {kasubag.length > 0 && (
+                        {/* === LEVEL 3: KEPALA BIDANG === */}
+                        {kepalaBidang.length > 0 && (
                             <div className="mb-10">
                                 <div className="flex items-center justify-center mb-6">
                                     <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
-                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Kepala Sub Bagian</span>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Kepala Bidang</span>
                                     <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
                                 </div>
                                 <div className="flex flex-wrap justify-center gap-6">
-                                    {kasubag.map((pegawai, index) => (
+                                    {kepalaBidang.map((pegawai, index) => (
                                         <SekretarisCard key={pegawai.id || index} pegawai={pegawai} index={index} />
                                     ))}
                                 </div>
                             </div>
                         )}
 
-                        {/* === LEVEL 4: STAFF (Pelaksana, Jafung, PPPK) === */}
+                        {/* === LEVEL 4: KASUBAG KEUANGAN === */}
+                        {kasubagKeuangan.length > 0 && (
+                            <div className="mb-10">
+                                <div className="flex items-center justify-center mb-6">
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Kasubag Keuangan</span>
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-6">
+                                    {kasubagKeuangan.map((pegawai, index) => (
+                                        <SekretarisCard key={pegawai.id || index} pegawai={pegawai} index={index} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* === LEVEL 5: KASUBAG UMUM === */}
+                        {kasubagUmum.length > 0 && (
+                            <div className="mb-10">
+                                <div className="flex items-center justify-center mb-6">
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Kasubag Administrasi Umum</span>
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-6">
+                                    {kasubagUmum.map((pegawai, index) => (
+                                        <SekretarisCard key={pegawai.id || index} pegawai={pegawai} index={index} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* === LEVEL 6: STAFF (Pelaksana, Jafung, PPPK) === */}
                         {staff.length > 0 && (
                             <div>
                                 <div className="flex items-center justify-center mb-6">
