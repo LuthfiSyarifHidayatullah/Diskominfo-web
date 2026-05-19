@@ -1,5 +1,6 @@
 // Struktur Organisasi Page - MPL ID Roster Style
 // Card foto pegawai dengan hover warna sesuai tipe jabatan
+// Layout: Pimpinan atas, Sekretaris & Kabid tengah, Staff bawah
 
 const StrukturOrganisasiPage = () => {
     const [activeBidang, setActiveBidang] = React.useState('');
@@ -65,6 +66,12 @@ const StrukturOrganisasiPage = () => {
         }
     };
 
+    // Tipe yang termasuk level pimpinan (card besar, posisi atas)
+    const LEVEL_PIMPINAN = ['kepala_dinas'];
+    const LEVEL_SEKRETARIS = ['sekretaris'];
+    const LEVEL_KASUBAG = ['kasubag'];
+    const LEVEL_STAFF = ['pelaksana', 'jafung', 'pppk'];
+
     React.useEffect(() => {
         fetchData();
     }, []);
@@ -107,6 +114,8 @@ const StrukturOrganisasiPage = () => {
         return TIPE_JABATAN_STYLES[tipeJabatan] || TIPE_JABATAN_STYLES.pelaksana;
     };
 
+    // Foto ditampilkan dalam lingkaran 160x160px (pimpinan) dan 128x128px (staff)
+    // Rekomendasi ukuran foto upload: 400x400px (rasio 1:1, persegi)
     const getFotoUrl = (pegawai) => {
         if (pegawai.foto && pegawai.foto.startsWith('/uploads/')) {
             return pegawai.foto;
@@ -114,7 +123,7 @@ const StrukturOrganisasiPage = () => {
         if (pegawai.foto && pegawai.foto.startsWith('http')) {
             return pegawai.foto;
         }
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(pegawai.nama)}&background=e2e8f0&color=475569&size=200&font-size=0.35`;
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(pegawai.nama)}&background=e2e8f0&color=475569&size=400&font-size=0.35`;
     };
 
     if (loading) {
@@ -135,6 +144,133 @@ const StrukturOrganisasiPage = () => {
             </div>
         );
     }
+
+    // Pisahkan per level
+    const pimpinan = currentBidang.anggota.filter(a => LEVEL_PIMPINAN.includes(a.tipeJabatan));
+    const sekretaris = currentBidang.anggota.filter(a => LEVEL_SEKRETARIS.includes(a.tipeJabatan));
+    const kasubag = currentBidang.anggota.filter(a => LEVEL_KASUBAG.includes(a.tipeJabatan));
+    const staff = currentBidang.anggota.filter(a => LEVEL_STAFF.includes(a.tipeJabatan) || !a.tipeJabatan);
+
+    // Card component untuk pimpinan (besar) - foto 160x160px
+    const PimpinanCard = ({ pegawai, index }) => {
+        const style = getStyle(pegawai.tipeJabatan || 'kepala_dinas');
+        return (
+            <div
+                key={pegawai.id || index}
+                className={`group bg-white rounded-2xl border-2 border-gray-100 w-full max-w-[280px] overflow-hidden cursor-pointer
+                    transition-all duration-300 ease-out
+                    hover:-translate-y-2 hover:shadow-xl ${style.hoverBorder} ${style.hoverShadow}`}
+            >
+                <div className={`h-1.5 bg-gray-100 transition-colors duration-300 ${style.hoverBg}`}></div>
+                <div className="pt-8 pb-4 flex justify-center">
+                    <div className={`w-40 h-40 rounded-full overflow-hidden border-4 border-gray-100 shadow-lg
+                        transition-all duration-300
+                        group-hover:border-transparent ring-0 group-hover:ring-4 ${style.hoverRing}`}>
+                        <img
+                            src={getFotoUrl(pegawai)}
+                            alt={pegawai.nama}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                    </div>
+                </div>
+                <div className="pb-6 px-5 text-center">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 transition-colors duration-300 ${style.badge}`}>
+                        {style.label}
+                    </span>
+                    <h4 className="font-bold text-gray-900 text-base mb-1 leading-tight">
+                        {pegawai.nama}
+                    </h4>
+                    <p className="text-gray-500 text-sm font-medium mb-1">
+                        {pegawai.jabatan}
+                    </p>
+                    <p className="text-gray-300 text-xs font-mono">
+                        {pegawai.nip}
+                    </p>
+                </div>
+            </div>
+        );
+    };
+
+    // Card component untuk sekretaris/kabid (sedang) - foto 136x136px
+    const SekretarisCard = ({ pegawai, index }) => {
+        const style = getStyle(pegawai.tipeJabatan || 'sekretaris');
+        return (
+            <div
+                key={pegawai.id || index}
+                className={`group bg-white rounded-2xl border-2 border-gray-100 w-full max-w-[260px] overflow-hidden cursor-pointer
+                    transition-all duration-300 ease-out
+                    hover:-translate-y-2 hover:shadow-xl ${style.hoverBorder} ${style.hoverShadow}`}
+            >
+                <div className={`h-1 bg-gray-100 transition-colors duration-300 ${style.hoverBg}`}></div>
+                <div className="pt-6 pb-3 flex justify-center">
+                    <div className={`w-34 h-34 rounded-full overflow-hidden border-4 border-gray-100 shadow-md
+                        transition-all duration-300
+                        group-hover:border-transparent ring-0 group-hover:ring-4 ${style.hoverRing}`}
+                        style={{ width: '136px', height: '136px' }}>
+                        <img
+                            src={getFotoUrl(pegawai)}
+                            alt={pegawai.nama}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                    </div>
+                </div>
+                <div className="pb-5 px-4 text-center">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 transition-colors duration-300 ${style.badge}`}>
+                        {style.label}
+                    </span>
+                    <h4 className="font-bold text-gray-900 text-sm mb-1 leading-tight">
+                        {pegawai.nama}
+                    </h4>
+                    <p className="text-gray-500 text-xs font-medium mb-1">
+                        {pegawai.jabatan}
+                    </p>
+                    <p className="text-gray-300 text-xs font-mono">
+                        {pegawai.nip}
+                    </p>
+                </div>
+            </div>
+        );
+    };
+
+    // Card component untuk staff (standar) - foto 128x128px
+    const StaffCard = ({ pegawai, index }) => {
+        const style = getStyle(pegawai.tipeJabatan || 'pelaksana');
+        return (
+            <div
+                key={pegawai.id || index}
+                className={`group bg-white rounded-2xl border-2 border-gray-100 w-full max-w-[240px] overflow-hidden cursor-pointer
+                    transition-all duration-300 ease-out
+                    hover:-translate-y-2 hover:shadow-xl ${style.hoverBorder} ${style.hoverShadow}`}
+            >
+                <div className={`h-1 bg-gray-100 transition-colors duration-300 ${style.hoverBg}`}></div>
+                <div className="pt-5 pb-3 flex justify-center">
+                    <div className={`w-32 h-32 rounded-full overflow-hidden border-4 border-gray-100 shadow-md
+                        transition-all duration-300
+                        group-hover:border-transparent ring-0 group-hover:ring-4 ${style.hoverRing}`}>
+                        <img
+                            src={getFotoUrl(pegawai)}
+                            alt={pegawai.nama}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                    </div>
+                </div>
+                <div className="pb-5 px-4 text-center">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 transition-colors duration-300 ${style.badge}`}>
+                        {style.label}
+                    </span>
+                    <h4 className="font-bold text-gray-900 text-sm mb-1 leading-tight">
+                        {pegawai.nama}
+                    </h4>
+                    <p className="text-gray-500 text-xs font-medium mb-1">
+                        {pegawai.jabatan}
+                    </p>
+                    <p className="text-gray-300 text-xs font-mono">
+                        {pegawai.nip}
+                    </p>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="pt-20">
@@ -171,6 +307,15 @@ const StrukturOrganisasiPage = () => {
                 </div>
             </section>
 
+            {/* Info Ukuran Foto */}
+            <section className="bg-blue-50 border-b border-blue-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+                    <p className="text-center text-xs text-blue-600">
+                        Ukuran foto yang direkomendasikan: <strong>400 x 400 piksel</strong> (rasio 1:1, format JPG/PNG, maks 2MB)
+                    </p>
+                </div>
+            </section>
+
             {/* Bidang Tabs */}
             <section className="bg-white shadow-sm sticky top-16 md:top-20 z-30 border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -201,53 +346,71 @@ const StrukturOrganisasiPage = () => {
                         <p className="text-gray-600 max-w-lg mx-auto">{currentBidang.deskripsi}</p>
                     </div>
 
-                    {/* Cards Grid */}
                     <div className={`transition-all duration-200 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
-                            {currentBidang.anggota.map((pegawai, index) => {
-                                const style = getStyle(pegawai.tipeJabatan || 'pelaksana');
-                                return (
-                                    <div
-                                        key={pegawai.id || index}
-                                        className={`group bg-white rounded-2xl border-2 border-gray-100 w-full max-w-[260px] overflow-hidden cursor-pointer
-                                            transition-all duration-300 ease-out
-                                            hover:-translate-y-2 hover:shadow-xl ${style.hoverBorder} ${style.hoverShadow}`}
-                                    >
-                                        {/* Top color bar - appears on hover */}
-                                        <div className={`h-1 bg-gray-100 transition-colors duration-300 ${style.hoverBg}`}></div>
 
-                                        {/* Photo */}
-                                        <div className="pt-6 pb-3 flex justify-center">
-                                            <div className={`w-28 h-28 rounded-full overflow-hidden border-4 border-gray-100 shadow-md
-                                                transition-all duration-300
-                                                group-hover:border-transparent ring-0 group-hover:ring-4 ${style.hoverRing}`}>
-                                                <img
-                                                    src={getFotoUrl(pegawai)}
-                                                    alt={pegawai.nama}
-                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                                />
-                                            </div>
-                                        </div>
+                        {/* === LEVEL 1: PIMPINAN (Kepala Dinas) === */}
+                        {pimpinan.length > 0 && (
+                            <div className="mb-10">
+                                <div className="flex items-center justify-center mb-6">
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pimpinan</span>
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-6">
+                                    {pimpinan.map((pegawai, index) => (
+                                        <PimpinanCard key={pegawai.id || index} pegawai={pegawai} index={index} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
-                                        {/* Info */}
-                                        <div className="pb-6 px-4 text-center">
-                                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 transition-colors duration-300 ${style.badge}`}>
-                                                {style.label}
-                                            </span>
-                                            <h4 className="font-bold text-gray-900 text-sm mb-1 leading-tight">
-                                                {pegawai.nama}
-                                            </h4>
-                                            <p className="text-gray-500 text-xs font-medium mb-1">
-                                                {pegawai.jabatan}
-                                            </p>
-                                            <p className="text-gray-300 text-xs font-mono">
-                                                {pegawai.nip}
-                                            </p>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        {/* === LEVEL 2: SEKRETARIS (terpisah dari Kabid) === */}
+                        {sekretaris.length > 0 && (
+                            <div className="mb-10">
+                                <div className="flex items-center justify-center mb-6">
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sekretaris & Kepala Bidang</span>
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-6">
+                                    {sekretaris.map((pegawai, index) => (
+                                        <SekretarisCard key={pegawai.id || index} pegawai={pegawai} index={index} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* === LEVEL 3: KASUBAG === */}
+                        {kasubag.length > 0 && (
+                            <div className="mb-10">
+                                <div className="flex items-center justify-center mb-6">
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Kepala Sub Bagian</span>
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-6">
+                                    {kasubag.map((pegawai, index) => (
+                                        <SekretarisCard key={pegawai.id || index} pegawai={pegawai} index={index} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* === LEVEL 4: STAFF (Pelaksana, Jafung, PPPK) === */}
+                        {staff.length > 0 && (
+                            <div>
+                                <div className="flex items-center justify-center mb-6">
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Staff & Pelaksana</span>
+                                    <div className="h-px bg-gray-200 flex-1 max-w-[80px]"></div>
+                                </div>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 justify-items-center">
+                                    {staff.map((pegawai, index) => (
+                                        <StaffCard key={pegawai.id || index} pegawai={pegawai} index={index} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>
