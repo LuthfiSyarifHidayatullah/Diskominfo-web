@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Diskominfo Bengkayang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .modal-overlay { background: rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">DK</span>
+                </div>
+                <div>
+                    <h1 class="font-bold text-gray-900">Admin Panel</h1>
+                    <p class="text-xs text-gray-500">Diskominfo Bengkayang</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="text-sm text-gray-500">Kelola Data Pegawai</span>
+                <a href="/" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">Lihat Website</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Tabs -->
+        <div class="flex space-x-2 mb-6">
+            <button onclick="showTab('pegawai')" id="tab-pegawai" class="tab-btn px-5 py-2.5 rounded-lg text-sm font-semibold bg-blue-600 text-white">
+                Data Pegawai
+            </button>
+            <button onclick="showTab('bidang')" id="tab-bidang" class="tab-btn px-5 py-2.5 rounded-lg text-sm font-semibold bg-gray-200 text-gray-600">
+                Kelola Bidang
+            </button>
+        </div>
+
+        <!-- Pegawai Section -->
+        <div id="section-pegawai">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-900">Daftar Pegawai</h2>
+                <button onclick="openAddModal()" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
+                    + Tambah Pegawai
+                </button>
+            </div>
+
+            <!-- Filter by Bidang -->
+            <div class="mb-4">
+                <select id="filter-bidang" onchange="renderPegawai()" class="px-4 py-2 border border-gray-200 rounded-lg text-sm">
+                    <option value="">Semua Bidang</option>
+                </select>
+            </div>
+
+            <!-- Pegawai Table -->
+            <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Foto</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Nama</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Jabatan</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tipe</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Bidang</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">NIP</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pegawai-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bidang Section -->
+        <div id="section-bidang" class="hidden">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-900">Kelola Bidang</h2>
+                <button onclick="openAddBidangModal()" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
+                    + Tambah Bidang
+                </button>
+            </div>
+            <div id="bidang-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+    </div>
+
+    <!-- Modal Pegawai -->
+    <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <h3 id="modal-title" class="text-lg font-bold text-gray-900">Tambah Pegawai</h3>
+            </div>
+            <form id="pegawai-form" onsubmit="savePegawai(event)" class="p-6 space-y-4">
+                <input type="hidden" id="form-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="form-nama" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jabatan</label>
+                    <input type="text" id="form-jabatan" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">NIP</label>
+                    <input type="text" id="form-nip" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Jabatan</label>
+                    <select id="form-tipeJabatan" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none">
+                        <option value="pimpinan">Pimpinan</option>
+                        <option value="sekretaris">Sekretaris</option>
+                        <option value="jafung">Jabatan Fungsional (Jafung)</option>
+                        <option value="pelaksana">Pelaksana</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bidang</label>
+                    <select id="form-bidangId" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none">
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+                    <input type="file" id="form-foto" accept="image/*" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm">
+                    <div id="foto-preview" class="mt-2 hidden">
+                        <img id="foto-preview-img" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
+                    </div>
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700">Simpan</button>
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Bidang -->
+    <div id="modal-bidang" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
+            <div class="p-6 border-b">
+                <h3 id="modal-bidang-title" class="text-lg font-bold text-gray-900">Tambah Bidang</h3>
+            </div>
+            <form id="bidang-form" onsubmit="saveBidang(event)" class="p-6 space-y-4">
+                <input type="hidden" id="form-bidang-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ID Bidang (unik, tanpa spasi)</label>
+                    <input type="text" id="form-bidang-id-input" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none" placeholder="contoh: aptika">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Bidang</label>
+                    <input type="text" id="form-bidang-nama" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                    <input type="text" id="form-bidang-deskripsi" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none">
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700">Simpan</button>
+                    <button type="button" onclick="closeBidangModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    const API_BASE = window.location.origin;
+    let allData = { bidang: [], pegawai: [] };
+
+    // Color mapping for tipe jabatan
+    const TIPE_COLORS = {
+        pimpinan: 'bg-yellow-100 text-yellow-800',
+        sekretaris: 'bg-blue-100 text-blue-800',
+        jafung: 'bg-purple-100 text-purple-800',
+        pelaksana: 'bg-gray-100 text-gray-700'
+    };
+    const TIPE_LABELS = {
+        pimpinan: 'Pimpinan',
+        sekretaris: 'Sekretaris',
+        jafung: 'Jafung',
+        pelaksana: 'Pelaksana'
+    };
+
+    async function loadData() {
+        const res = await fetch(`${API_BASE}/api/pegawai`);
+        allData = await res.json();
+        renderPegawai();
+        renderBidang();
+        populateBidangSelects();
+    }
+
+    function populateBidangSelects() {
+        const options = allData.bidang.map(b => `<option value="${b.id}">${b.nama}</option>`).join('');
+        document.getElementById('form-bidangId').innerHTML = options;
+        document.getElementById('filter-bidang').innerHTML = '<option value="">Semua Bidang</option>' + options;
+    }
+
+    function renderPegawai() {
+        const filter = document.getElementById('filter-bidang').value;
+        let pegawai = allData.pegawai;
+        if (filter) pegawai = pegawai.filter(p => p.bidangId === filter);
+
+        const tbody = document.getElementById('pegawai-table-body');
+        tbody.innerHTML = pegawai.map(p => {
+            const bidang = allData.bidang.find(b => b.id === p.bidangId);
+            const fotoUrl = p.foto ? `${API_BASE}${p.foto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.nama)}&background=6366f1&color=fff&size=80`;
+            return `<tr class="border-b hover:bg-gray-50">
+                <td class="px-4 py-3"><img src="${fotoUrl}" class="w-10 h-10 rounded-full object-cover border"></td>
+                <td class="px-4 py-3 text-sm font-medium text-gray-900">${p.nama}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${p.jabatan}</td>
+                <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${TIPE_COLORS[p.tipeJabatan] || TIPE_COLORS.pelaksana}">${TIPE_LABELS[p.tipeJabatan] || p.tipeJabatan}</span></td>
+                <td class="px-4 py-3 text-sm text-gray-600">${bidang ? bidang.nama : '-'}</td>
+                <td class="px-4 py-3 text-sm text-gray-500 font-mono">${p.nip || '-'}</td>
+                <td class="px-4 py-3">
+                    <button onclick="editPegawai('${p.id}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium mr-2">Edit</button>
+                    <button onclick="deletePegawai('${p.id}')" class="text-red-600 hover:text-red-800 text-sm font-medium">Hapus</button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        if (pegawai.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">Belum ada data pegawai</td></tr>';
+        }
+    }
+
+    function renderBidang() {
+        const container = document.getElementById('bidang-list');
+        container.innerHTML = allData.bidang.map(b => {
+            const count = allData.pegawai.filter(p => p.bidangId === b.id).length;
+            return `<div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-semibold text-gray-900">${b.nama}</h4>
+                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">${count} pegawai</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-3">${b.deskripsi || '-'}</p>
+                <p class="text-xs text-gray-400 mb-3">ID: ${b.id}</p>
+                <div class="flex space-x-2">
+                    <button onclick="editBidang('${b.id}')" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100">Edit</button>
+                    <button onclick="deleteBidang('${b.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-medium rounded-lg hover:bg-red-100">Hapus</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function showTab(tab) {
+        document.getElementById('section-pegawai').classList.toggle('hidden', tab !== 'pegawai');
+        document.getElementById('section-bidang').classList.toggle('hidden', tab !== 'bidang');
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('bg-gray-200', 'text-gray-600');
+        });
+        document.getElementById(`tab-${tab}`).classList.remove('bg-gray-200', 'text-gray-600');
+        document.getElementById(`tab-${tab}`).classList.add('bg-blue-600', 'text-white');
+    }
+
+    // ===== PEGAWAI CRUD =====
+    function openAddModal() {
+        document.getElementById('modal-title').textContent = 'Tambah Pegawai';
+        document.getElementById('form-id').value = '';
+        document.getElementById('form-nama').value = '';
+        document.getElementById('form-jabatan').value = '';
+        document.getElementById('form-nip').value = '';
+        document.getElementById('form-tipeJabatan').value = 'pelaksana';
+        document.getElementById('form-foto').value = '';
+        document.getElementById('foto-preview').classList.add('hidden');
+        document.getElementById('modal').classList.remove('hidden');
+    }
+
+    function editPegawai(id) {
+        const p = allData.pegawai.find(x => x.id === id);
+        if (!p) return;
+        document.getElementById('modal-title').textContent = 'Edit Pegawai';
+        document.getElementById('form-id').value = p.id;
+        document.getElementById('form-nama').value = p.nama;
+        document.getElementById('form-jabatan').value = p.jabatan;
+        document.getElementById('form-nip').value = p.nip || '';
+        document.getElementById('form-tipeJabatan').value = p.tipeJabatan || 'pelaksana';
+        document.getElementById('form-bidangId').value = p.bidangId;
+        document.getElementById('form-foto').value = '';
+        if (p.foto) {
+            document.getElementById('foto-preview').classList.remove('hidden');
+            document.getElementById('foto-preview-img').src = `${API_BASE}${p.foto}`;
+        } else {
+            document.getElementById('foto-preview').classList.add('hidden');
+        }
+        document.getElementById('modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.add('hidden');
+    }
+
+    async function savePegawai(e) {
+        e.preventDefault();
+        const id = document.getElementById('form-id').value;
+        const fotoFile = document.getElementById('form-foto').files[0];
+
+        const formData = new FormData();
+        formData.append('nama', document.getElementById('form-nama').value);
+        formData.append('jabatan', document.getElementById('form-jabatan').value);
+        formData.append('nip', document.getElementById('form-nip').value);
+        formData.append('tipeJabatan', document.getElementById('form-tipeJabatan').value);
+        formData.append('bidangId', document.getElementById('form-bidangId').value);
+        if (fotoFile) formData.append('foto', fotoFile);
+
+        const url = id ? `${API_BASE}/api/pegawai/${id}` : `${API_BASE}/api/pegawai`;
+        const method = id ? 'PUT' : 'POST';
+
+        await fetch(url, { method, body: formData });
+        closeModal();
+        loadData();
+    }
+
+    async function deletePegawai(id) {
+        if (!confirm('Yakin ingin menghapus pegawai ini?')) return;
+        await fetch(`${API_BASE}/api/pegawai/${id}`, { method: 'DELETE' });
+        loadData();
+    }
+
+    // ===== BIDANG CRUD =====
+    function openAddBidangModal() {
+        document.getElementById('modal-bidang-title').textContent = 'Tambah Bidang';
+        document.getElementById('form-bidang-id').value = '';
+        document.getElementById('form-bidang-id-input').value = '';
+        document.getElementById('form-bidang-id-input').disabled = false;
+        document.getElementById('form-bidang-nama').value = '';
+        document.getElementById('form-bidang-deskripsi').value = '';
+        document.getElementById('modal-bidang').classList.remove('hidden');
+    }
+
+    function editBidang(id) {
+        const b = allData.bidang.find(x => x.id === id);
+        if (!b) return;
+        document.getElementById('modal-bidang-title').textContent = 'Edit Bidang';
+        document.getElementById('form-bidang-id').value = b.id;
+        document.getElementById('form-bidang-id-input').value = b.id;
+        document.getElementById('form-bidang-id-input').disabled = true;
+        document.getElementById('form-bidang-nama').value = b.nama;
+        document.getElementById('form-bidang-deskripsi').value = b.deskripsi || '';
+        document.getElementById('modal-bidang').classList.remove('hidden');
+    }
+
+    function closeBidangModal() {
+        document.getElementById('modal-bidang').classList.add('hidden');
+    }
+
+    async function saveBidang(e) {
+        e.preventDefault();
+        const existingId = document.getElementById('form-bidang-id').value;
+        const body = {
+            id: document.getElementById('form-bidang-id-input').value,
+            nama: document.getElementById('form-bidang-nama').value,
+            deskripsi: document.getElementById('form-bidang-deskripsi').value
+        };
+
+        if (existingId) {
+            await fetch(`${API_BASE}/api/bidang/${existingId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+        } else {
+            await fetch(`${API_BASE}/api/bidang`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+        }
+        closeBidangModal();
+        loadData();
+    }
+
+    async function deleteBidang(id) {
+        const count = allData.pegawai.filter(p => p.bidangId === id).length;
+        if (!confirm(`Yakin hapus bidang ini? ${count} pegawai di bidang ini juga akan dihapus.`)) return;
+        await fetch(`${API_BASE}/api/bidang/${id}`, { method: 'DELETE' });
+        loadData();
+    }
+
+    // Init
+    loadData();
+    </script>
+</body>
+</html>
