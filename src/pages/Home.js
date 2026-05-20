@@ -104,7 +104,9 @@ const HomePage = ({ setCurrentPage }) => {
                             <div className="relative">
                                 <div className="w-80 h-80 bg-white/10 backdrop-blur-sm rounded-3xl border border-white/20 flex items-center justify-center">
                                     <div className="text-center">
-                                        <div className="text-6xl mb-4">🏛️</div>
+                                        <div className="flex justify-center mb-4">
+                                            <img src="/src/assets/bengkayang.png" alt="Logo Kabupaten Bengkayang" className="w-40 h-40 object-contain" />
+                                        </div>
                                         <p className="text-white font-semibold text-lg">Kab. Bengkayang</p>
                                         <p className="text-blue-200 text-sm">Kalimantan Barat</p>
                                     </div>
