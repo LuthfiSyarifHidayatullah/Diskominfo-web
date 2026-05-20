@@ -7,9 +7,7 @@ const Footer = ({ setCurrentPage }) => {
                     {/* Brand */}
                     <div className="md:col-span-2">
                         <div className="flex items-center space-x-3 mb-4">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">DK</span>
-                            </div>
+                            <img src="/src/assets/logo.png" alt="Logo Diskominfo" className="w-10 h-10 object-contain" />
                             <div>
                                 <h3 className="font-bold text-lg">DISKOMINFO</h3>
                                 <p className="text-gray-400 text-sm">Kabupaten Bengkayang</p>

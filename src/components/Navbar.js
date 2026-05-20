@@ -30,9 +30,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                 <div className="flex items-center justify-between h-16 md:h-20">
                     {/* Logo */}
                     <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center shadow-lg">
-                            <span className="text-white font-bold text-sm">DK</span>
-                        </div>
+                        <img src="/src/assets/logo.png" alt="Logo Diskominfo" className="w-10 h-10 object-contain" />
                         <div className="hidden sm:block">
                             <h1 className={`font-bold text-sm leading-tight ${isTransparent ? 'text-white' : 'text-gray-900'}`}>
                                 DISKOMINFO
